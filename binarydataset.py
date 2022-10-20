@@ -5,6 +5,9 @@ import torchvision
 import os
 from PIL import Image
 
+import numpy as np
+import cv2
+
 IMAGE_SIZE = 256
 
 class BinaryDataset(torch.utils.data.Dataset):
@@ -84,3 +87,19 @@ class BinaryDataset(torch.utils.data.Dataset):
             elem.to(device)
         for elem in self.ai_imgs:
             elem.to(device)
+    
+    def get_img(self, item):
+        # check bounds
+        if not item < len(self.real_imgs)+len(self.ai_imgs):
+            raise ValueException("Dataloader index out of range.")
+        
+        img = None
+        # lower index is real
+        if item < len(self.real_imgs):
+            img = np.asarray(Image.open(self.real_imgs[item]))
+        # higher is ai
+        else:
+            img = np.asarray(Image.open(self.ai_imgs[item-len(self.real_imgs)]))
+        img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
+        img = np.float32(img) / 255
+        return img

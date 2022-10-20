@@ -10,7 +10,7 @@ from binarydataset import BinaryDataset
 def main(args):
 
     # load training data
-    train_data = BinaryDataset("./non_AI_art/", "./__ai_training/", max_size=900)
+    train_data = BinaryDataset("./_non_AI_art/", "./__ai_training/", max_size=900)
     #train_data.to(args.device)
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize
@@ -18,7 +18,7 @@ def main(args):
     print("Training Data Sizes: Real -", len(train_data.real_imgs), "AI -", len(train_data.ai_imgs))
 
     # load validation data
-    val_data = BinaryDataset("./non_AI_validation/", "./__ai_validation/", max_size=100)
+    val_data = BinaryDataset("./_non_AI_validation/", "./__ai_validation/", max_size=100)
     #val_data.to(args.device)
     val_loader = torch.utils.data.DataLoader(
         val_data, shuffle=False, batch_size=args.batchsize
