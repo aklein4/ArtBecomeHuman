@@ -55,7 +55,7 @@ class BinaryDataset(torch.utils.data.Dataset):
     def __getitem__(self,item):
         # check bounds
         if not item < len(self.real_imgs)+len(self.ai_imgs):
-            raise ValueException("Dataloader index out of range.")
+            raise ValueError("Dataloader index out of range.")
         
         # lower index is real
         if item < len(self.real_imgs):
@@ -91,7 +91,7 @@ class BinaryDataset(torch.utils.data.Dataset):
     def get_img(self, item):
         # check bounds
         if not item < len(self.real_imgs)+len(self.ai_imgs):
-            raise ValueException("Dataloader index out of range.")
+            raise ValueError("Dataloader index out of range.")
         
         img = None
         # lower index is real

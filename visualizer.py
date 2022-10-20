@@ -1,5 +1,7 @@
 
 import torch
+
+# pip install grad-cam
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from pytorch_grad_cam.utils.image import show_cam_on_image
@@ -18,7 +20,7 @@ def main(args):
     print("Validation Data Sizes: Real -", len(val_data.real_imgs), "AI -", len(val_data.ai_imgs))
 
     # load model state
-    state_dict = torch.load("./model_states/epoch=327-step=65928.pt")
+    state_dict = torch.load("./model_states/epoch=327-step=65928.pt", map_location=args.device)
 
     # create model
     model = EFFICIENTNET_V2_CUSTOM()
@@ -27,7 +29,7 @@ def main(args):
     model.eval()
 
     target_layer = "_blocks.15"
-    cam = GradCAM(model=model, target_layers=[model.effnet.features[7]], use_cuda=True)
+    cam = GradCAM(model=model, target_layers=[model.effnet.features[7]], use_cuda=(True if args.device==torch.device("cuda") else False))
 
     while True:
         item = random.randrange(0, len(val_data))

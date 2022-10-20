@@ -8,7 +8,7 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
     def __init__(self, lr=1e-5):
         super().__init__()
 
-        # make learning rate an argument
+        # make learning rate an arg
         self.lr = lr
 
         # yoink effnet
