@@ -15,7 +15,6 @@ def main(args):
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize
     )
-
     print("Training Data Sizes: Real -", len(train_data.real_imgs), "AI -", len(train_data.ai_imgs))
 
     # load validation data
@@ -24,7 +23,6 @@ def main(args):
     val_loader = torch.utils.data.DataLoader(
         val_data, shuffle=False, batch_size=args.batchsize
     )
-
     print("Validation Data Sizes: Real -", len(val_data.real_imgs), "AI -", len(val_data.ai_imgs))
 
     # create model
@@ -35,7 +33,7 @@ def main(args):
 
     # initialize extra stuff
     logger = pl.loggers.CSVLogger(
-        save_dir='lightning_logs',
+        save_dir='.',
         flush_logs_every_n_steps=10000
     )
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
