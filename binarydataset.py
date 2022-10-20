@@ -10,26 +10,40 @@ IMAGE_SIZE = 256
 class BinaryDataset(torch.utils.data.Dataset):
     def __init__(self, real_path, ai_path, max_size=10000):
         # define transform classes
-        to_image = torchvision.transforms.ToTensor()
-        resize = torchvision.transforms.Resize([IMAGE_SIZE, IMAGE_SIZE])
+        self.to_image = torchvision.transforms.ToTensor()
+        self.resize = torchvision.transforms.Resize([IMAGE_SIZE, IMAGE_SIZE])
 
-        # load non-ai images
+        # # load non-ai images
         self.real_imgs = []
         for f in os.listdir(real_path):
-            img = resize(to_image(Image.open(real_path+f)))
+            img = self.to_image(Image.open(real_path+f))
             if img.shape[0] == 3:
-                self.real_imgs.append(img)
-            if len(self.real_imgs) >=  max_size:
-                break
+                self.real_imgs.append(real_path+f)
 
         # load ai images
         self.ai_imgs = []
         for f in os.listdir(ai_path):
-            img = resize(to_image(Image.open(ai_path+f)))
+            img = self.to_image(Image.open(ai_path+f))
             if img.shape[0] == 3:
-                self.ai_imgs.append(img)
-            if len(self.ai_imgs) >=  max_size:
-                break
+                self.ai_imgs.append(ai_path+f)
+
+        # # load non-ai images
+        # self.real_imgs = []
+        # for f in os.listdir(real_path):
+        #     img = resize(to_image(Image.open(real_path+f)))
+        #     if img.shape[0] == 3:
+        #         self.real_imgs.append(img)
+        #     if len(self.real_imgs) >=  max_size:
+        #         break
+
+        # load ai images
+        # self.ai_imgs = []
+        # for f in os.listdir(ai_path):
+        #     img = resize(to_image(Image.open(ai_path+f)))
+        #     if img.shape[0] == 3:
+        #         self.ai_imgs.append(img)
+        #     if len(self.ai_imgs) >=  max_size:
+        #         break
 
     def __len__(self):
         # total length of data
@@ -43,14 +57,26 @@ class BinaryDataset(torch.utils.data.Dataset):
         # lower index is real
         if item < len(self.real_imgs):
             return {
-                'x': self.real_imgs[item],
+                'x': self.resize(self.to_image(Image.open(self.real_imgs[item]))),
                 'y': 0
             }
         # higher is ai
         return {
-            'x': self.ai_imgs[item-len(self.real_imgs)],
+            'x': self.resize(self.to_image(Image.open(self.ai_imgs[item-len(self.real_imgs)]))),
             'y': 1
         }
+
+        # # lower index is real
+        # if item < len(self.real_imgs):
+        #     return {
+        #         'x': self.real_imgs[item],
+        #         'y': 0
+        #     }
+        # # higher is ai
+        # return {
+        #     'x': self.ai_imgs[item-len(self.real_imgs)],
+        #     'y': 1
+        # }
     
     def to(self, device):
         # move all data to device
