@@ -28,7 +28,6 @@ def main(args):
     model.load_state_dict(state_dict)
     model.eval()
 
-    target_layer = "_blocks.15"
     cam = GradCAM(model=model, target_layers=[model.effnet.features[7]], use_cuda=(True if args.device==torch.device("cuda") else False))
 
     while True:
@@ -46,10 +45,8 @@ def main(args):
         print("Predicts AI?", "yes" if guess == 1 else "no")
         print(" ----- ")
 
-        # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
         grayscale_cam = cam(input_tensor=img_tensor, targets=targets)
 
-        # In this example grayscale_cam has only one image in the batch:
         visualization = show_cam_on_image(img, grayscale_cam[0], use_rgb=True)
         plt.imshow(visualization)
         plt.show()
