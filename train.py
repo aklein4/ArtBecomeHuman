@@ -2,15 +2,19 @@
 import torch
 import pytorch_lightning as pl
 
+import argparse
+
 from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
-def main():
+def main(args):
 
-    dataset = BinaryDataset("./non_AI_art/", "./_digital/")
+    dataset = BinaryDataset("./non_AI_art/", "./_digital/", max_size=10)
+    dataset.to(args.device)
     train_loader = torch.utils.data.DataLoader(dataset, shuffle=True, )
 
     model = EFFICIENTNET_V2_CUSTOM()
+    model.to(args.device)
     optimizer = model.configure_optimizers()
 
     model.train()
@@ -22,4 +26,10 @@ def main():
     trainer.fit(model, train_loader)
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Train model to identify AI art.')
+
+    parser.add_argument('--gpu', dest='device', action='store_const', const=torch.device('cuda'), default=torch.device('cpu'), 
+                    help='Whether to use cuda gpu acceleration')
+
+    args = parser.parse_args()
+    main(args)
