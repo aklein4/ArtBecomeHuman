@@ -14,11 +14,15 @@ class BinaryDataset(torch.utils.data.Dataset):
 
         self.real_imgs = []
         for f in os.listdir(real_path):
-            self.real_imgs.append(resize(to_image(Image.open(real_path+f))))
+            img = resize(to_image(Image.open(real_path+f)))
+            if img.shape[0] == 3:
+                self.real_imgs.append(img)
 
         self.ai_imgs = []
         for f in os.listdir(ai_path):
-            self.real_imgs.append(resize(to_image(Image.open(real_path+f))))
+            img = resize(to_image(Image.open(ai_path+f)))
+            if img.shape[0] == 3:
+                self.ai_imgs.append(img)
 
     def __len__(self):
         return len(self.real_imgs)+len(self.ai_imgs)

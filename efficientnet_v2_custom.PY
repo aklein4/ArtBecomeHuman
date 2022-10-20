@@ -7,7 +7,7 @@ import torch
 class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        
+
         self.effnet = torchvision.models.efficientnet_v2_s(weights='IMAGENET1K_V1')
         self.loss_func = nn.CrossEntropyLoss()
 
