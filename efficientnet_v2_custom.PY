@@ -16,7 +16,7 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
         return optimizer
 
     def forward(self, x):
-        return self.effnet(x)
+        return self.effnet(x)[:,:2]
 
     def training_step(self, batch, batch_idx):
         pred = self(batch['x'])
