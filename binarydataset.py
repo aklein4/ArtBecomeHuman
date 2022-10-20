@@ -9,9 +9,11 @@ IMAGE_SIZE = 256
 
 class BinaryDataset(torch.utils.data.Dataset):
     def __init__(self, real_path, ai_path, max_size=10000):
+        # define transform classes
         to_image = torchvision.transforms.ToTensor()
         resize = torchvision.transforms.Resize([IMAGE_SIZE, IMAGE_SIZE])
 
+        # load non-ai images
         self.real_imgs = []
         for f in os.listdir(real_path):
             img = resize(to_image(Image.open(real_path+f)))
@@ -20,6 +22,7 @@ class BinaryDataset(torch.utils.data.Dataset):
             if len(self.real_imgs) >=  max_size:
                 break
 
+        # load ai images
         self.ai_imgs = []
         for f in os.listdir(ai_path):
             img = resize(to_image(Image.open(ai_path+f)))
@@ -29,22 +32,28 @@ class BinaryDataset(torch.utils.data.Dataset):
                 break
 
     def __len__(self):
+        # total length of data
         return len(self.real_imgs)+len(self.ai_imgs)
     
     def __getitem__(self,item):
+        # check bounds
         if not item < len(self.real_imgs)+len(self.ai_imgs):
             raise ValueException("Dataloader index out of range.")
+        
+        # lower index is real
         if item < len(self.real_imgs):
             return {
                 'x': self.real_imgs[item],
                 'y': 0
             }
+        # higher is ai
         return {
             'x': self.ai_imgs[item-len(self.real_imgs)],
             'y': 1
         }
     
     def to(self, device):
+        # move all data to device
         for elem in self.real_imgs:
             elem.to(device)
         for elem in self.ai_imgs:
