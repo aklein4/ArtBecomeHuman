@@ -1,6 +1,6 @@
 # ArtBecomeHuman
 
-## TODO:
+### TODO:
 1. Figure out why current model is so accurate on current data
     1. Did validation set leak into training set?
     2. Is there an obvious bias (ex. difference in style) between the ai and real sets?
