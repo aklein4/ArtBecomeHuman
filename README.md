@@ -1,5 +1,8 @@
 # ArtBecomeHuman
 
+### Link to Progress Report:
+https://docs.google.com/document/d/1r_XVNKTlKX4AIG9H7Rr_2ILExxBuKFvZH4KvV88vbQg/edit?usp=sharing
+
 ### TODO:
 1. Figure out why current model is so accurate on current data
     1. Did validation set leak into training set?
