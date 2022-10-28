@@ -15,7 +15,11 @@ https://docs.google.com/document/d/1r_XVNKTlKX4AIG9H7Rr_2ILExxBuKFvZH4KvV88vbQg/
     1. Gradcam on correct/incorrect ai/real images
     2. Find distinguishing features between ai and real images
 
+### Training Loss Graph:
 ![graph showing loss throughout training](example_images/loss_graph_10-20.png?raw=true)
+
+### Example GradCam Feature Maps
+(To generate more of these, run the visualizer.py script) <br />
 
 AI Identified Image: <br />
 ![graph showing loss throughout training](example_images/ai_example_activations.png?raw=true)
