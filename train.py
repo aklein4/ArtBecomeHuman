@@ -10,7 +10,7 @@ from binarydataset import BinaryDataset
 def main(args):
 
     # load training data
-    train_data = BinaryDataset("./_non_AI_art/", "./__ai_training/", max_size=900)
+    train_data = BinaryDataset("./_non_AI_art/", "./_ai_training/", max_size=900)
     #train_data.to(args.device)
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize

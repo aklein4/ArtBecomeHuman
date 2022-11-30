@@ -16,7 +16,7 @@ from binarydataset import BinaryDataset
 def main(args):
 
     # load validation data
-    val_data = BinaryDataset("./_non_AI_validation/", "./__ai_validation/", max_size=100)
+    val_data = BinaryDataset("./_non_AI_validation/", "./_ai_validation/", max_size=100)
     print("Validation Data Sizes: Real -", len(val_data.real_imgs), "AI -", len(val_data.ai_imgs))
 
     # load model state
