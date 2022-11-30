@@ -1,5 +1,8 @@
 # ArtBecomeHuman
 
+### Link to Progress Report:
+https://docs.google.com/document/d/1r_XVNKTlKX4AIG9H7Rr_2ILExxBuKFvZH4KvV88vbQg/edit?usp=sharing
+
 ### TODO:
 1. Figure out why current model is so accurate on current data
     1. Did validation set leak into training set?
@@ -12,7 +15,11 @@
     1. Gradcam on correct/incorrect ai/real images
     2. Find distinguishing features between ai and real images
 
+### Training Loss Graph:
 ![graph showing loss throughout training](example_images/loss_graph_10-20.png?raw=true)
+
+### Example GradCam Feature Maps
+(To generate more of these, run the visualizer.py script) <br />
 
 AI Identified Image: <br />
 ![graph showing loss throughout training](example_images/ai_example_activations.png?raw=true)
