@@ -1,5 +1,7 @@
 
 import torch
+
+# pip install grad-cam
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from pytorch_grad_cam.utils.image import show_cam_on_image
@@ -14,11 +16,11 @@ from binarydataset import BinaryDataset
 def main(args):
 
     # load validation data
-    val_data = BinaryDataset("./_non_AI_validation/", "./__ai_validation/", max_size=100)
+    val_data = BinaryDataset("./_non_AI_validation/", "./_ai_validation/", max_size=100)
     print("Validation Data Sizes: Real -", len(val_data.real_imgs), "AI -", len(val_data.ai_imgs))
 
     # load model state
-    state_dict = torch.load("./model_states/epoch=327-step=65928.pt")
+    state_dict = torch.load("./model_states/epoch=327-step=65928.pt", map_location=args.device)
 
     # create model
     model = EFFICIENTNET_V2_CUSTOM()
@@ -26,8 +28,7 @@ def main(args):
     model.load_state_dict(state_dict)
     model.eval()
 
-    target_layer = "_blocks.15"
-    cam = GradCAM(model=model, target_layers=[model.effnet.features[7]], use_cuda=True)
+    cam = GradCAM(model=model, target_layers=[model.effnet.features[7]], use_cuda=(True if args.device==torch.device("cuda") else False))
 
     while True:
         item = random.randrange(0, len(val_data))
@@ -44,10 +45,8 @@ def main(args):
         print("Predicts AI?", "yes" if guess == 1 else "no")
         print(" ----- ")
 
-        # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
         grayscale_cam = cam(input_tensor=img_tensor, targets=targets)
 
-        # In this example grayscale_cam has only one image in the batch:
         visualization = show_cam_on_image(img, grayscale_cam[0], use_rgb=True)
         plt.imshow(visualization)
         plt.show()
