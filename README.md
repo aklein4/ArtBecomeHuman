@@ -1,5 +1,7 @@
 # ArtBecomeHuman
 
+To run the ai-art generating scripts, put them in the /scripts/ folder of stable-diffusion and modify the constants at the top of the files.
+
 ![graph showing loss throughout training](loss_graph_10-20.png?raw=true)
 
 ### TODO:
