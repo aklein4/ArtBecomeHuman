@@ -20,7 +20,7 @@ def main(args):
     print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
-    checkpoint = torch.load("./checkpoints/gray_checkpoints/last.ckpt", map_location=args.device)
+    checkpoint = torch.load(args.path, map_location=args.device)
 
     # create model
     model = EFFICIENTNET_V2_CUSTOM(grayscale=True)
@@ -59,6 +59,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train model to identify AI art.')
 
     parser.add_argument('--gpu', dest='device', action='store_const', const=torch.device('cuda'), default=torch.device('cpu'), 
+                    help='Whether to use cuda gpu acceleration')
+
+    parser.add_argument('-p', '--path', dest='path', type=str, default="", 
                     help='Whether to use cuda gpu acceleration')
 
     args = parser.parse_args()

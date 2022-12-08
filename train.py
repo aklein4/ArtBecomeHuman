@@ -18,7 +18,7 @@ AI_PATH = "./data/__AI__artbench"
 GRAY = True
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "v2_"
+CHECKPOINT_PREFIX = "test_"
 
 
 def main(args):
@@ -54,7 +54,7 @@ def main(args):
 
     # callback for best model
     best_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints" if not GRAY else "gray_checkpoints"), save_top_k=3,
+        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints"), save_top_k=1,
         monitor="valid_loss", save_last=True, mode='min'
     )
 
@@ -63,7 +63,7 @@ def main(args):
         accelerator=('gpu' if args.device == torch.device('cuda') else 'cpu'),
         logger=logger,
         check_val_every_n_epoch=1,
-        callbacks=[best_callback], max_epochs=-1
+        callbacks=[best_callback], max_epochs=args.epochs
     )
 
     # train forever...
@@ -83,6 +83,9 @@ if __name__ == '__main__':
                     help='Training learning rate (Default 1e-5)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
+                    help='Divide the training and val sets by this size (Default 1)')
+    
+    parser.add_argument('-e', '--epochs', dest='epochs', type=int, default=-1, 
                     help='Divide the training and val sets by this size (Default 1)')
     
     args = parser.parse_args()
