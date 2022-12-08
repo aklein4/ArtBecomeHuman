@@ -2,6 +2,8 @@
 *.ckpt
 *.pyc
 **/__pycache__
-*.yaml
 
 **.tar
+**.tar.gz
+**artbench
+**.jpg
