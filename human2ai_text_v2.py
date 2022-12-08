@@ -22,10 +22,10 @@ NOISE_STRENGTH = 0.25
 # prompt to give the model (appended to end of genre folder name)
 #PROMPT = "painting of"
 
-PROMPT_DIR = "C:\\Repos\\ArtBecomeHuman\\data\\__AI__artbench_prompts"
+PROMPT_DIR = "ArtBecomeHuman/data/__AI__artbench_prompts"
 
 # base directory to load from
-BASE_INPUT_DIR = "C:\\Repos\\ArtBecomeHuman\\artbench"
+BASE_INPUT_DIR = "artbench"
 
 # dataset folders to use from base
 DATA_SETS = ["train"]
@@ -48,10 +48,10 @@ GENRE_FOLDERS = [
 AI_PREFIX = "__AI__"
 
 # base output directory
-BASE_OUTPUT_DIR = "C:\\Repos\\ArtBecomeHuman\\"+AI_PREFIX+"artbench"
+BASE_OUTPUT_DIR = "ArtBecomeHuman/"+AI_PREFIX+"artbench_new_prompt"
 
 # number of images to run at a time
-BATCH_SIZE = 100
+BATCH_SIZE = 4
 
 
 def chunk(it, size):
@@ -145,13 +145,13 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/stable-diffusion/v1-inference.yaml",
+        default="stable-diffusion/stable-diffusion-main/configs/stable-diffusion/v1-inference.yaml",
         help="path to config which constructs model",
     )
     parser.add_argument(
         "--ckpt",
         type=str,
-        default="models/ldm/stable-diffusion-v1/model.ckpt",
+        default="stable-diffusion/stable-diffusion-main/models/ldm/stable-diffusion-v1/model.ckpt",
         help="path to checkpoint of model",
     )
     parser.add_argument(
@@ -216,7 +216,7 @@ def main():
             # get the current input folder
             genre_input_folder = os.path.join(dataset_input_folder, genre)
             text_genre_input_folder = os.path.join(PROMPT_DIR, dataset, genre)
-            prompt_file = os.path.join(text_genre_input_folder, '\\prompts.txt')
+            prompt_file = os.path.join(text_genre_input_folder, 'prompts.txt')
             
             # stack of image names to convert
             img_list = list(os.listdir(genre_input_folder))
@@ -225,6 +225,7 @@ def main():
 
 
             img_ind = 0
+            text_ind = 0
             # iterate through images in sub-set
             while len(img_list) > 0:
 
@@ -238,16 +239,22 @@ def main():
                     print('file exists')
                 file = open(prompt_file)
                 content = file.readlines()
-
-
+                
+                text_max_ind = 249
+                if (genre == "test"):
+                    text_max_ind = 49
+                    
                 while len(prompts) < BATCH_SIZE and len(img_list) > 0:
 
                     # get prompt description of image
                     curr_name = img_list.pop()
                     titles.append(curr_name)
-                    prompts.append(content[img_ind])
+                    prompts.append(content[text_ind])
                    # prompts.append(genre + " " + PROMPT + " " + curr_name.split('_')[1][:-4].replace("-", " "))
-
+                    if (text_ind == text_max_ind):
+                        text_ind = 0
+                    else:
+                        text_ind += 1
                     # verbose
                     img_ind += 1
                     print("\n -- Image", str(img_ind)+":")
