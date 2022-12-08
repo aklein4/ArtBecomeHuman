@@ -6,7 +6,7 @@ import torch
 
 
 class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
-    def __init__(self, lr=1e-5, n_classes=2, pretrained=False):
+    def __init__(self, lr=1e-5, n_classes=2, pretrained=False, grayscale=False):
         super().__init__()
 
         # make learning rate an arg
@@ -20,6 +20,20 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
         
         # get correct output size
         self.effnet.classifier[-1] = nn.Linear(self.effnet.classifier[-1].in_features, self.n_classes)
+
+        # get correct input size
+        self.grayscale = grayscale
+        if self.grayscale:
+
+            old_weights = self.effnet.features[0][0].weight.data[:, 0, :, :].clone()
+            old_weights = torch.unsqueeze(old_weights, 1)
+
+            self.effnet.features[0][0] = nn.Conv2d(1, 24, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+            
+            conv = self.effnet.features[0][0]
+            conv.weight.requires_grad = False
+            conv.weight.data = old_weights
+            conv.weight.requires_grad = True
 
         # use this as loss
         self.loss_func = nn.CrossEntropyLoss()
@@ -38,14 +52,16 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # get training loss
-        pred = self(batch['x'])
+        x, y = batch
 
-        loss = self.loss_func(pred, batch['y'])
+        pred = self(x)
+
+        loss = self.loss_func(pred, y)
         self.log('train_loss', loss, on_epoch=True, on_step=False, prog_bar=True)
 
         fixed = torch.maximum(torch.sign(pred[:, 1] - pred[:, 0]), torch.tensor(0, dtype=pred.dtype, device=pred.device))
 
-        acc = torch.sum(batch['y'][:, 1] * fixed + (1-batch['y'][:, 1]) * (1-fixed)) / torch.numel(batch['y'][:, 1])
+        acc = torch.sum(y * fixed + (1-y) * (1-fixed)) / torch.numel(y)
         self.log('train_acc', acc, on_epoch=True, on_step=False, prog_bar=True)
 
         return loss
@@ -53,14 +69,17 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         # get validation loss
-        pred = self(batch['x'])
+        x, y = batch
 
-        loss = self.loss_func(pred, batch['y'])
+        pred = self(x)
+
+        loss = self.loss_func(pred, y)
         self.log('valid_loss', loss, on_epoch=True, on_step=False, prog_bar=True)
 
         fixed = torch.maximum(torch.sign(pred[:, 1] - pred[:, 0]), torch.tensor(0, dtype=pred.dtype, device=pred.device))
 
-        acc = torch.sum(batch['y'][:, 1] * fixed + (1-batch['y'][:, 1]) * (1-fixed)) / torch.numel(batch['y'][:, 1])
+        acc = torch.sum(y * fixed + (1-y) * (1-fixed)) / torch.numel(y)
         self.log('val_acc', acc, on_epoch=True, on_step=False, prog_bar=True)
 
         return loss
+
