@@ -17,24 +17,23 @@ from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
 
-REAL_PATH = "./artbench"
-AI_PATH = "./__AI__artbench"
+REAL_PATH = "./data/artbench"
+AI_PATH = "./data/__AI__artbench"
 
 CAM_TYPE = pytorch_grad_cam.EigenCAM
     
 
 def main(args):
-
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100)
-    print("Training Data Sizes: Real -", torch.sum(val_data.labels[:, 0]).item(), "AI -", torch.sum(val_data.labels[:, 1]).item())
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=True)
+    print("Training Data Sizes: Real -", torch.numel(val_data.labels) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
-    checkpoint = torch.load("./checkpoints/best_checkpoint.ckpt")
+    checkpoint = torch.load("./checkpoints/gray_checkpoints/last.ckpt", map_location=args.device)
 
     # create model
-    model = EFFICIENTNET_V2_CUSTOM()
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=True)
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
@@ -48,15 +47,17 @@ def main(args):
 
         item = random.randrange(0, len(val_data))
 
-        img_tensor = torch.unsqueeze(val_data[item]['x'], 0)
+        x, y = val_data[item]
+        x = torch.unsqueeze(x, 0)
 
-        print("AI?", "yes" if val_data[item]['y'][1] == 1 else "no")
+        print("AI?", "yes" if y == 1 else "no")
 
-        pred = model.forward(img_tensor.to(args.device))
+        pred = model.forward(x.to(args.device))[0]
         guess = 0
-        if pred[0][1] > pred[0][0]:
+        if pred[1] > pred[0]:
             guess = 1
         print("Predicts AI?", "yes" if guess == 1 else "no")
+        print('AI:', pred[1].item(), " - REAL:", pred[0].item())
         print("")
 
         act_ind = len(model.effnet.features[layer])-1
@@ -68,11 +69,10 @@ def main(args):
             cam = CAM_TYPE(model=model, target_layers=[model.effnet.features[layer][act_ind]], use_cuda=(True if args.device==torch.device("cuda") else False))
 
             img = val_data.get_img(item)
-            img_tensor = torch.unsqueeze(val_data[item]['x'], 0)
 
             targets = [ClassifierOutputTarget(label)]
 
-            grayscale_cam = cam(input_tensor=img_tensor, targets=targets)
+            grayscale_cam = cam(input_tensor=x, targets=targets)
 
             visualization = show_cam_on_image(img, grayscale_cam[0], use_rgb=True)
             plt.imshow(visualization)

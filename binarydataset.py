@@ -42,10 +42,18 @@ class BinaryDataset(torch.utils.data.Dataset):
         ai_files = scrape_folder(ai_path)[::skip_len]
         combined = ai_files + real_files
 
+        # save length
+        self.len = len(combined)
+        
+        # check for empty (bad)
+        if self.len == 0:
+            raise RuntimeWarning("BinaryDataSet is empty!")
+
         # init tensors to fill with data
         # note that we use uint8 and convert to float32 later, this takes RAM usage from 80GB to 20GB
         self.data = torch.zeros((len(combined), (1 if self.grayscale else 3), IMAGE_SIZE, IMAGE_SIZE), dtype=torch.uint8)
         self.labels = torch.zeros(len(combined), dtype=torch.long)
+
 
         # print the size of the dataset
         if verbose:
@@ -71,10 +79,7 @@ class BinaryDataset(torch.utils.data.Dataset):
         # ai corresponds to index 1, and it is first. human is left as 0
         for i in range(len(ai_files)):
             self.labels[i] = 1
-
-        # save length
-        self.len = len(combined)
-        
+    
 
     def __len__(self):
         # total length of data

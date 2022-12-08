@@ -9,21 +9,21 @@ import os
 from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
-REAL_PATH = "./artbench"
-AI_PATH = "./__AI__artbench"
+REAL_PATH = "./data/artbench"
+AI_PATH = "./data/old_data"
 
 def main(args):
 
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset("./checkpoints", "./_ai_validation", skip_len=1)
-    print("Training Data Sizes: Real -", torch.sum(val_data.labels[:, 0]).item(), "AI -", torch.sum(val_data.labels[:, 1]).item())
+    val_data = BinaryDataset("./checkpoints", os.path.join(AI_PATH, "test/"), skip_len=20, grayscale=True)
+    print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
-    checkpoint = torch.load("./checkpoints/epoch=0-step=782.ckpt")
+    checkpoint = torch.load("./checkpoints/gray_checkpoints/last.ckpt", map_location=args.device)
 
     # create model
-    model = EFFICIENTNET_V2_CUSTOM()
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=True)
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
@@ -32,16 +32,16 @@ def main(args):
     correct = 0
     # loop through entire dataset
     for i in range(len(val_data)):
-        point = val_data[i]
+        x, y = val_data[i]
 
         # get model's prediction (prediction is index of highest output)
-        pred = model.forward(torch.unsqueeze(point['x'], 0).to(args.device))
+        pred = model.forward(torch.unsqueeze(x, 0).to(args.device))
         guess = 0
         if pred[0][1] > pred[0][0]:
             guess = 1
 
         # check if correct
-        if guess == point['y'][1]:
+        if guess == y:
             correct += 1
 
         # progress message
