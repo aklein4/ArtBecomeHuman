@@ -225,6 +225,7 @@ def main():
 
 
             img_ind = 0
+            text_ind = 0
             # iterate through images in sub-set
             while len(img_list) > 0:
 
@@ -238,16 +239,22 @@ def main():
                     print('file exists')
                 file = open(prompt_file)
                 content = file.readlines()
-
-
+                
+                text_max_ind = 249
+                if (genre == "test"):
+                    text_max_ind = 49
+                    
                 while len(prompts) < BATCH_SIZE and len(img_list) > 0:
 
                     # get prompt description of image
                     curr_name = img_list.pop()
                     titles.append(curr_name)
-                    prompts.append(content[img_ind])
+                    prompts.append(content[text_ind])
                    # prompts.append(genre + " " + PROMPT + " " + curr_name.split('_')[1][:-4].replace("-", " "))
-
+                    if (text_ind == text_max_ind):
+                        text_ind = 0
+                    else:
+                        text_ind += 1
                     # verbose
                     img_ind += 1
                     print("\n -- Image", str(img_ind)+":")
