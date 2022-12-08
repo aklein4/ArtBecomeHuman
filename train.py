@@ -12,7 +12,7 @@ from pytorch_lightning.loggers import CSVLogger
 
 # set dataset paths
 REAL_PATH = "./data/artbench"
-AI_PATH = "./__AI__artbench"
+AI_PATH = "./data/__AI__artbench"
 
 # whether we are using grayscale images
 GRAY = True

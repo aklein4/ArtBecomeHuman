@@ -31,7 +31,7 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
             conv = self.effnet.features[0][0]
 
             conv.input_channels = 1
-            conv.weight.data = conv.weight.data[:, 0, :, :]
+            conv.weight.data = torch.unsqueeze(conv.weight.data[:, 0, :, :], 1)
 
         # use this as loss
         self.loss_func = nn.CrossEntropyLoss()
