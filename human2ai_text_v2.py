@@ -216,7 +216,7 @@ def main():
             # get the current input folder
             genre_input_folder = os.path.join(dataset_input_folder, genre)
             text_genre_input_folder = os.path.join(PROMPT_DIR, dataset, genre)
-            prompt_file = os.path.join(text_genre_input_folder, '/prompts.txt')
+            prompt_file = os.path.join(text_genre_input_folder, 'prompts.txt')
             
             # stack of image names to convert
             img_list = list(os.listdir(genre_input_folder))
