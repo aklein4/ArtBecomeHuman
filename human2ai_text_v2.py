@@ -25,7 +25,7 @@ NOISE_STRENGTH = 0.25
 PROMPT_DIR = "ArtBecomeHuman/data/__AI__artbench_prompts"
 
 # base directory to load from
-BASE_INPUT_DIR = "ArtBecomeHuman/artbench"
+BASE_INPUT_DIR = "artbench"
 
 # dataset folders to use from base
 DATA_SETS = ["train"]
@@ -48,7 +48,7 @@ GENRE_FOLDERS = [
 AI_PREFIX = "__AI__"
 
 # base output directory
-BASE_OUTPUT_DIR = "ArtBecomeHuman/"+AI_PREFIX+"artbench"
+BASE_OUTPUT_DIR = "ArtBecomeHuman/"+AI_PREFIX+"artbench_new_prompt"
 
 # number of images to run at a time
 BATCH_SIZE = 100
