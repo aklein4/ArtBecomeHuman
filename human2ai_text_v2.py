@@ -51,7 +51,7 @@ AI_PREFIX = "__AI__"
 BASE_OUTPUT_DIR = "ArtBecomeHuman/"+AI_PREFIX+"artbench_new_prompt"
 
 # number of images to run at a time
-BATCH_SIZE = 100
+BATCH_SIZE = 4
 
 
 def chunk(it, size):
