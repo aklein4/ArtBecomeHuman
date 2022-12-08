@@ -47,7 +47,7 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
         # pass x through net
         y = self.effnet(x)
         if self.legacy:
-            return y[:self.n_classes]
+            return y[:, :self.n_classes]
         return y
 
 

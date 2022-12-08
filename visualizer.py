@@ -17,8 +17,8 @@ from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
 
-REAL_PATH = "./data/artbench"
-AI_PATH = "./data/__AI__artbench"
+REAL_PATH = "./utils"
+AI_PATH = "./data/old_data"
 
 CAM_TYPE = pytorch_grad_cam.EigenCAM
     
