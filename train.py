@@ -11,11 +11,14 @@ from pytorch_lightning.loggers import CSVLogger
 
 
 # set dataset paths
-REAL_PATH = "/home/adam3207/data/artbench"
-AI_PATH = "/home/adam3207/data/__AI__artbench"
+REAL_PATH = "./data/artbench"
+AI_PATH = "./__AI__artbench"
 
 # whether we are using grayscale images
 GRAY = True
+
+# where to store the checkpoints
+CHECKPOINT_PREFIX = "v2_"
 
 
 def main(args):
@@ -51,7 +54,7 @@ def main(args):
 
     # callback for best model
     best_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=("best_checkpoints"if not GRAY else "gray_checkpoints"), save_top_k=3,
+        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints" if not GRAY else "gray_checkpoints"), save_top_k=3,
         monitor="valid_loss", save_last=True, mode='min'
     )
 
@@ -71,17 +74,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train model to identify AI art.')
 
     parser.add_argument('--gpu', dest='device', action='store_const', const=torch.device('cuda'), default=torch.device('cpu'), 
-                    help='Whether to use cuda gpu acceleration')
+                    help='Whether to use cuda gpu acceleration (Default False)')
 
     parser.add_argument('-bs', '--batchsize', dest='batchsize', type=int, default=128, 
-                    help='Whether to use cuda gpu acceleration')
+                    help='Training batch size (Default 128)')
     
     parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-5, 
-                    help='Whether to use cuda gpu acceleration')
+                    help='Training learning rate (Default 1e-5)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
-                    help='Divide the training and val sets by this size.')
+                    help='Divide the training and val sets by this size (Default 1)')
     
-
     args = parser.parse_args()
     main(args)

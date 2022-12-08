@@ -6,7 +6,7 @@ import torch
 
 
 class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
-    def __init__(self, lr=1e-5, n_classes=2, pretrained=False, grayscale=False):
+    def __init__(self, lr=1e-5, n_classes=2, pretrained=False, grayscale=False, legacy=False):
         super().__init__()
 
         # make learning rate an arg
@@ -15,25 +15,23 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
         # number of classes
         self.n_classes = n_classes
 
+        # the old one was trained with slightly different architecture
+        self.legacy = legacy
+
         # yoink effnet
         self.effnet = torchvision.models.efficientnet_v2_s(weights=('IMAGENET1K_V1' if pretrained else None))
         
         # get correct output size
-        self.effnet.classifier[-1] = nn.Linear(self.effnet.classifier[-1].in_features, self.n_classes)
+        if not self.legacy:
+            self.effnet.classifier[-1] = nn.Linear(self.effnet.classifier[-1].in_features, self.n_classes)
 
         # get correct input size
         self.grayscale = grayscale
         if self.grayscale:
-
-            old_weights = self.effnet.features[0][0].weight.data[:, 0, :, :].clone()
-            old_weights = torch.unsqueeze(old_weights, 1)
-
-            self.effnet.features[0][0] = nn.Conv2d(1, 24, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
-            
             conv = self.effnet.features[0][0]
-            conv.weight.requires_grad = False
-            conv.weight.data = old_weights
-            conv.weight.requires_grad = True
+
+            conv.input_channels = 1
+            conv.weight.data = conv.weight.data[:, 0, :, :]
 
         # use this as loss
         self.loss_func = nn.CrossEntropyLoss()
@@ -47,7 +45,10 @@ class EFFICIENTNET_V2_CUSTOM(pl.LightningModule):
 
     def forward(self, x):
         # pass x through net
-        return self.effnet(x)
+        y = self.effnet(x)
+        if self.legacy:
+            return y[:self.n_classes]
+        return y
 
 
     def training_step(self, batch, batch_idx):

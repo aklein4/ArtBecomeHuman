@@ -47,6 +47,7 @@ class BinaryDataset(torch.utils.data.Dataset):
         self.data = torch.zeros((len(combined), (1 if self.grayscale else 3), IMAGE_SIZE, IMAGE_SIZE), dtype=torch.uint8)
         self.labels = torch.zeros(len(combined), dtype=torch.long)
 
+        # print the size of the dataset
         if verbose:
             print("Dataset Size:", round((self.data.element_size() * self.data.nelement())*1e-9, 4), "GB")
 
