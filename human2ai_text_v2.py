@@ -32,16 +32,16 @@ DATA_SETS = ["train"]
 
 # list of genre sorted folders to use
 GENRE_FOLDERS = [
-    "art_nouveau",
+    "art nouveau",
     "baroque",
     "expressionism",
     "impressionism",
-    "post_impressionism",
+    "post-impressionism",
     "realism",
     "renaissance",
     "romanticism",
     "surrealism",
-    "ukiyo_e"
+    "ukiyo-e"
 ]
 
 # prefix to give ai files and folders
