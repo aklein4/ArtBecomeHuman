@@ -4,5 +4,4 @@
 **/__pycache__
 *.yaml
 
-**/__AI_artbench
-**/artbench
+**.tar
