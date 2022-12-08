@@ -93,16 +93,16 @@ def main():
             iter = 0
             for row in cr:
                 genre = row[GENRE_IND]
-                if style == 'label':
+                if genre == 'label':
                     continue
-                print(style + str(iter))
+                print(genre + str(iter))
                 url = row[URL_IND]
                 name = row[NAME_IND]
                 lex_dic = get_lexica_dict(url)
                 #wait for .25 seconds
                 time.sleep(0.25)
-                
-                download_image(lex_dic[iter]["src"], AI_PREFIX + name, genre_dict[style])
+
+                download_image(lex_dic[iter]["src"], AI_PREFIX + name, genre_dict[genre])
                 #wait for .25 seconds
                 time.sleep(0.25)
                 iter += 1
