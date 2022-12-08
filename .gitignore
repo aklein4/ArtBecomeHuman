@@ -2,6 +2,7 @@
 *.ckpt
 *.pyc
 **/__pycache__
+**/data_transfer
 
 **.tar
 **.tar.gz
