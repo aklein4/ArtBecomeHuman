@@ -17,8 +17,8 @@ from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
 
-REAL_PATH = "."
-AI_PATH = "C:/Repos/data/old_data/test/_ai_categories/_acrylic"
+REAL_PATH = "C:/Repos/data/human/test"
+AI_PATH = "C:/Repos/data/__AI__/test"
 
 CAM_TYPE = pytorch_grad_cam.EigenCAM
     
@@ -26,7 +26,7 @@ CAM_TYPE = pytorch_grad_cam.EigenCAM
 def main(args):
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), AI_PATH, skip_len=10, grayscale=False)
+    val_data = BinaryDataset(REAL_PATH, AI_PATH, skip_len=10, grayscale=False, noise=0.1)
     print("Training Data Sizes: Real -", torch.numel(val_data.labels) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training

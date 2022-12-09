@@ -89,16 +89,17 @@ class BinaryDataset(torch.utils.data.Dataset):
         return self.len
     
 
-    def __getitem__(self,item, noise=True):
+    def __getitem__(self,item):
         # check bounds
         if item >= self.len or item < 0:
             raise ValueError("Dataloader index out of range.")
 
         x = self.data[item].to(torch.float32) / 255.0
 
-        if noise:
+        if self.noise != 0.0:
             x += torch.randn(self.data[0].shape) * self.noise
             x = torch.maximum(x, torch.tensor(0))
+            x = torch.minimum(x, torch.tensor(1))
 
         # return x, y tuple
         return  x, self.labels[item]
