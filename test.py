@@ -5,25 +5,26 @@ import pytorch_lightning as pl
 import argparse
 import sys
 import os
+import random
 
 from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
-REAL_PATH = "./data/artbench"
-AI_PATH = "./data/old_data"
+REAL_PATH = "."
+AI_PATH = "./data/__AI__artbench"
 
 def main(args):
 
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset("./checkpoints", os.path.join(AI_PATH, "test/"), skip_len=20, grayscale=True)
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=True)
     print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
     checkpoint = torch.load(args.path, map_location=args.device)
 
     # create model
-    model = EFFICIENTNET_V2_CUSTOM(grayscale=True)
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=True, legacy=False)
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
@@ -31,7 +32,10 @@ def main(args):
     msg = ""
     correct = 0
     # loop through entire dataset
-    for i in range(len(val_data)):
+    inds = list(range(len(val_data)))
+    random.shuffle(inds)
+    for t in range(len(val_data)):
+        i = inds[t]
         x, y = val_data[i]
 
         # get model's prediction (prediction is index of highest output)
@@ -39,6 +43,8 @@ def main(args):
         guess = 0
         if pred[0][1] > pred[0][0]:
             guess = 1
+
+        print("<", pred[0][0].item(), pred[0][1].item(), ">", y.item())
 
         # check if correct
         if guess == y:

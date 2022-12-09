@@ -12,20 +12,20 @@ from pytorch_lightning.loggers import CSVLogger
 
 # set dataset paths
 REAL_PATH = "./data/artbench"
-AI_PATH = "./data/__AI__artbench"
+AI_PATH = "./data/old_data"
 
 # whether we are using grayscale images
 GRAY = True
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "test_"
+CHECKPOINT_PREFIX = "RH_AH_"
 
 
 def main(args):
 
     # load training data
     print("\nloading training data...")
-    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "train/"), skip_len=args.skip, grayscale=GRAY)
+    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "test/"), skip_len=args.skip, grayscale=GRAY)
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize, num_workers=12
     )
