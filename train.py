@@ -18,14 +18,14 @@ AI_PATH = "./data/__AI__"
 GRAY = False
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "combined_"
+CHECKPOINT_PREFIX = "noise_"
 
 
 def main(args):
 
     # load training data
     print("\nloading training data...")
-    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "train/"), skip_len=args.skip, grayscale=GRAY)
+    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "train/"), skip_len=args.skip, grayscale=GRAY, noise=args.noise)
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize, num_workers=12
     )
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batchsize', dest='batchsize', type=int, default=128, 
                     help='Training batch size (Default 128)')
     
-    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-7, 
+    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-5, 
                     help='Training learning rate (Default 1e-7)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
@@ -88,5 +88,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--epochs', dest='epochs', type=int, default=-1, 
                     help='Divide the training and val sets by this size (Default 1)')
     
+    parser.add_argument('-n', '--noise', dest='noise', type=int, default=0.1, 
+                    help='Divide the training and val sets by this size (Default 1)')
+
     args = parser.parse_args()
     main(args)
