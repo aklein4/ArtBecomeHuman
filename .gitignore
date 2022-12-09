@@ -2,7 +2,6 @@
 *.ckpt
 *.pyc
 **/__pycache__
-**/data_transfer
 
-**artbench
 **.jpg
+**.out
