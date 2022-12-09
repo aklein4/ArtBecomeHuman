@@ -28,7 +28,7 @@ def scrape_folder(folder) -> list:
 
 
 class BinaryDataset(torch.utils.data.Dataset):
-    def __init__(self, real_path, ai_path, skip_len=1, verbose=True, grayscale=False):
+    def __init__(self, real_path, ai_path, skip_len=1, verbose=True, grayscale=False, noise=0):
         # define transform classes
         to_tensor = torchvision.transforms.PILToTensor()
         resize = torchvision.transforms.Resize([IMAGE_SIZE, IMAGE_SIZE])
@@ -41,6 +41,8 @@ class BinaryDataset(torch.utils.data.Dataset):
         real_files = scrape_folder(real_path)[::skip_len]
         ai_files = scrape_folder(ai_path)[::skip_len]
         combined = ai_files + real_files
+
+        self.noise = noise
 
         # save length
         self.len = len(combined)
@@ -86,13 +88,19 @@ class BinaryDataset(torch.utils.data.Dataset):
         return self.len
     
 
-    def __getitem__(self,item):
+    def __getitem__(self,item, noise=True):
         # check bounds
         if item >= self.len or item < 0:
             raise ValueError("Dataloader index out of range.")
 
+        x = self.data[item].to(torch.float32) / 255.0
+
+        if noise:
+            x += torch.randn(self.data[0].shape) * self.noise
+            x = torch.maximum(x, torch.tensor(0))
+
         # return x, y tuple
-        return self.data[item].to(torch.float32) / 255.0, self.labels[item]
+        return  x, self.labels[item]
 
     
     def get_img(self, item):
