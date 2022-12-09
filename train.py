@@ -18,7 +18,7 @@ AI_PATH = "./data/__AI__"
 GRAY = False
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "combined"
+CHECKPOINT_PREFIX = "combined_"
 
 
 def main(args):
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                     help='Training batch size (Default 128)')
     
     parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-7, 
-                    help='Training learning rate (Default 1e-5)')
+                    help='Training learning rate (Default 1e-7)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
                     help='Divide the training and val sets by this size (Default 1)')

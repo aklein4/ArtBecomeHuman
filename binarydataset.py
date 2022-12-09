@@ -38,7 +38,7 @@ class BinaryDataset(torch.utils.data.Dataset):
         to_gray = torchvision.transforms.Grayscale(num_output_channels=1)
 
         # get list of real and ai files
-        real_files = scrape_folder(real_path)[::10*skip_len]
+        real_files = scrape_folder(real_path)[::skip_len]
         ai_files = scrape_folder(ai_path)[::skip_len]
         combined = ai_files + real_files
 
