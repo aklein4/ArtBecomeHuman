@@ -17,14 +17,22 @@ def main(args):
 
     # load training data
     print("\nloading validation data...")
+<<<<<<< HEAD
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=True)
+=======
     val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=False)
+>>>>>>> b29a4d500d33021aed1106a76faf6ec63df98451
     print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
     checkpoint = torch.load(args.path, map_location=args.device)
 
     # create model
+<<<<<<< HEAD
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=True, legacy=False)
+=======
     model = EFFICIENTNET_V2_CUSTOM(grayscale=False, legacy=True)
+>>>>>>> b29a4d500d33021aed1106a76faf6ec63df98451
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
