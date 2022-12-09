@@ -11,21 +11,21 @@ from pytorch_lightning.loggers import CSVLogger
 
 
 # set dataset paths
-REAL_PATH = "./data/artbench"
-AI_PATH = "./data/old_data"
+REAL_PATH = "./data/human"
+AI_PATH = "./data/__AI__"
 
 # whether we are using grayscale images
-GRAY = True
+GRAY = False
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "RH_AH_"
+CHECKPOINT_PREFIX = "combined"
 
 
 def main(args):
 
     # load training data
     print("\nloading training data...")
-    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "test/"), skip_len=args.skip, grayscale=GRAY)
+    train_data = BinaryDataset(os.path.join(REAL_PATH, "train/"), os.path.join(AI_PATH, "train/"), skip_len=args.skip, grayscale=GRAY)
     train_loader = torch.utils.data.DataLoader(
         train_data, shuffle=True, batch_size=args.batchsize, num_workers=12
     )
@@ -33,7 +33,7 @@ def main(args):
 
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=args.skip, grayscale=GRAY)
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "validate/"), os.path.join(AI_PATH, "validate/"), skip_len=args.skip, grayscale=GRAY)
     val_loader = torch.utils.data.DataLoader(
         val_data, shuffle=False, batch_size=args.batchsize, num_workers=12
     )
@@ -54,7 +54,7 @@ def main(args):
 
     # callback for best model
     best_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints"), save_top_k=1,
+        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints"), save_top_k=3,
         monitor="valid_loss", save_last=True, mode='min'
     )
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batchsize', dest='batchsize', type=int, default=128, 
                     help='Training batch size (Default 128)')
     
-    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-5, 
+    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-7, 
                     help='Training learning rate (Default 1e-5)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
