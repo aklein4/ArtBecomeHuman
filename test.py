@@ -10,29 +10,21 @@ import random
 from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
-REAL_PATH = "./data/artbench"
-AI_PATH = "./data/__AI__artbench"
+REAL_PATH = "C:/Repos/data/human"
+AI_PATH = "C:/Repos/data/__AI__"
 
 def main(args):
 
     # load training data
     print("\nloading validation data...")
-<<<<<<< HEAD
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=True)
-=======
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=False)
->>>>>>> b29a4d500d33021aed1106a76faf6ec63df98451
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=1, grayscale=False)
     print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
     checkpoint = torch.load(args.path, map_location=args.device)
 
     # create model
-<<<<<<< HEAD
-    model = EFFICIENTNET_V2_CUSTOM(grayscale=True, legacy=False)
-=======
-    model = EFFICIENTNET_V2_CUSTOM(grayscale=False, legacy=True)
->>>>>>> b29a4d500d33021aed1106a76faf6ec63df98451
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=False, legacy=False)
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
@@ -48,11 +40,9 @@ def main(args):
 
         # get model's prediction (prediction is index of highest output)
         pred = model.forward(torch.unsqueeze(x, 0).to(args.device))
-        guess = 0
-        if pred[0][1] > pred[0][0]:
-            guess = 1
+        guess = 1 if pred[0][1] > pred[0][0] else 0
 
-        print("<", pred[0][0].item(), pred[0][1].item(), ">", y.item())
+        # print("<", pred[0][0].item(), pred[0][1].item(), ">", y.item())
 
         # check if correct
         if guess == y:
@@ -60,6 +50,10 @@ def main(args):
 
         # progress message
         if i % 10 == 0:
+            for _ in range(len(msg)):
+                sys.stdout.write('\b')
+            for _ in range(len(msg)):
+                sys.stdout.write(' ')
             for _ in range(len(msg)):
                 sys.stdout.write('\b')
             msg = str(i)+"/"+str(len(val_data)) + "  -- " + str(round(correct/(i+1), 3))
@@ -75,8 +69,10 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', dest='device', action='store_const', const=torch.device('cuda'), default=torch.device('cpu'), 
                     help='Whether to use cuda gpu acceleration')
 
-    parser.add_argument('-p', '--path', dest='path', type=str, default="", 
+    parser.add_argument('-p', '--path', dest='path', type=str, default=None, 
                     help='Whether to use cuda gpu acceleration')
 
     args = parser.parse_args()
+    if args.path is None:
+        raise ValueError("Please input path to checkpoint.")
     main(args)

@@ -17,8 +17,8 @@ from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
 
-REAL_PATH = "./utils"
-AI_PATH = "./data/old_data"
+REAL_PATH = "."
+AI_PATH = "C:/Repos/data/old_data/test/_ai_categories/_acrylic"
 
 CAM_TYPE = pytorch_grad_cam.EigenCAM
     
@@ -26,14 +26,14 @@ CAM_TYPE = pytorch_grad_cam.EigenCAM
 def main(args):
     # load training data
     print("\nloading validation data...")
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=100, grayscale=True)
+    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), AI_PATH, skip_len=10, grayscale=False)
     print("Training Data Sizes: Real -", torch.numel(val_data.labels) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
-    checkpoint = torch.load("./checkpoints/gray_checkpoints/last.ckpt", map_location=args.device)
+    checkpoint = torch.load("./checkpoints/combined_checkpoints/last.ckpt", map_location=args.device)
 
     # create model
-    model = EFFICIENTNET_V2_CUSTOM(grayscale=True)
+    model = EFFICIENTNET_V2_CUSTOM(grayscale=False)
     model.load_state_dict(checkpoint['state_dict'])
     model.to(args.device)
     model.eval()
@@ -50,6 +50,7 @@ def main(args):
         x, y = val_data[item]
         x = torch.unsqueeze(x, 0)
 
+        print('"'+val_data.paths[item]+'"')
         print("AI?", "yes" if y == 1 else "no")
 
         pred = model.forward(x.to(args.device))[0]
@@ -103,9 +104,9 @@ def main(args):
                             break
                         pass
 
-            if command == 'a':
+            if command == 'q':
                 label = 0
-            elif command == 'd':
+            elif command == 'e':
                 label = 1
 
             elif command == 'w':
@@ -115,9 +116,9 @@ def main(args):
                 layer = max(0, layer - 1)
                 act_ind = len(model.effnet.features[layer])-1
             
-            elif command == 'e':
+            elif command == 'd':
                 act_ind = min(len(model.effnet.features[layer])-1, act_ind + 1)
-            elif command == 'q':
+            elif command == 'a':
                 act_ind = max(0, act_ind - 1)
 
             elif command == ' ':

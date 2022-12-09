@@ -44,7 +44,8 @@ class BinaryDataset(torch.utils.data.Dataset):
 
         # save length
         self.len = len(combined)
-        
+        self.paths = combined
+
         # check for empty (bad)
         if self.len == 0:
             raise RuntimeWarning("BinaryDataSet is empty!")
