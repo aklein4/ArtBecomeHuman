@@ -1,3 +1,11 @@
+
+Performance of different versions (note that the original images we collected were ganked):
+
+Legacy: Gets pretty much everything wrong
+Low-Quality Trained: Cannot identify high quality AI images
+Combined: Works for all stable-diffusion and artbench data. Also good with dall-e. However, cannot identify non-artbench real art.
+Combined With noise: Works for all stable-diffusion and artbench data. Also good with dall-e, but slightly worse than combined. However, cannot identify non-artbench real art.
+
 # ArtBecomeHuman
 
 To run the ai-art generating scripts, put them in the /scripts/ folder of stable-diffusion and modify the constants at the top of the files.
