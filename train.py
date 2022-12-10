@@ -18,7 +18,7 @@ AI_PATH = "./data/__AI__"
 GRAY = False
 
 # where to store the checkpoints
-CHECKPOINT_PREFIX = "noise_"
+CHECKPOINT_PREFIX = "const_noise_"
 
 
 def main(args):
@@ -54,7 +54,7 @@ def main(args):
 
     # callback for best model
     best_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints"), save_top_k=3,
+        dirpath=("./checkpoints/"+CHECKPOINT_PREFIX+"checkpoints"), save_top_k=1,
         monitor="valid_loss", save_last=True, mode='min'
     )
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batchsize', dest='batchsize', type=int, default=128, 
                     help='Training batch size (Default 128)')
     
-    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-5, 
+    parser.add_argument('-lr', '--learningrate', dest='lr', type=float, default=1e-6, 
                     help='Training learning rate (Default 1e-7)')
     
     parser.add_argument('-s', '--skip', dest='skip', type=int, default=1, 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--epochs', dest='epochs', type=int, default=-1, 
                     help='Divide the training and val sets by this size (Default 1)')
     
-    parser.add_argument('-n', '--noise', dest='noise', type=int, default=0.1, 
+    parser.add_argument('-n', '--noise', dest='noise', type=int, default=0.05, 
                     help='Divide the training and val sets by this size (Default 1)')
 
     args = parser.parse_args()

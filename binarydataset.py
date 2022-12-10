@@ -8,6 +8,7 @@ from PIL import Image
 import numpy as np
 import os
 from tqdm import tqdm
+import random
 
 
 # Size of images that we are working with
