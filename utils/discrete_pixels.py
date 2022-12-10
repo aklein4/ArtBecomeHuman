@@ -14,7 +14,9 @@ IMAGE_SIZE = 256
 GRAY = False
 
 def main(args):
-    
+    blur = torchvision.transforms.GaussianBlur(5, sigma=1)
+
+
     imgs = os.listdir(args.path)
     random.shuffle(imgs)
 
@@ -29,15 +31,16 @@ def main(args):
             og = to_gray(og)
             og = torch.stack([og[0, :, :] for _ in range(3)])
 
-        # rounded = torch.round(og * (args.bins-1)) / (args.bins-1)
         rounded = og.clone()
+        rounded = torch.round(og * (args.bins-1)) / (args.bins-1)
         if GRAY:
             noise = torch.randn(og.shape[1:]) * 0.05
             rounded += torch.stack([noise for _ in range(3)])
-        else:
-            rounded += torch.randn(og.shape) * 0.05
-        rounded = torch.maximum(rounded, torch.tensor(0))
-        rounded = torch.minimum(rounded, torch.tensor(1))
+        # else:
+        #     rounded += torch.randn(og.shape) * 0.05
+        # rounded = torch.maximum(rounded, torch.tensor(0))
+        # rounded = torch.minimum(rounded, torch.tensor(1))
+        # rounded = blur(rounded)
 
         og_picture = np.asarray(torch.permute(og, (1, 2, 0)))
         

@@ -55,7 +55,7 @@ def main(args):
     ax[1].legend(["train_acc", "val_acc"])
     ax[1].set_ylabel('Accuracy')
 
-    plt.suptitle('Model Progress Through Training')
+    plt.suptitle('Model Progress Through Training \n (With Gaussian Noise)')
     plt.xlabel('Epoch')
     plt.show()
 
