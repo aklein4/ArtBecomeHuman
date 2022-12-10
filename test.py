@@ -10,15 +10,15 @@ import random
 from efficientnet_v2_custom import EFFICIENTNET_V2_CUSTOM
 from binarydataset import BinaryDataset
 
-REAL_PATH = "C:/Repos/data/human"
-AI_PATH = "C:/Repos/data/__AI__"
+REAL_PATH = "C:/Repos/data/testing"
+AI_PATH = "jbkjbh"
 
 def main(args):
 
     # load training data
-    print("\nloading validation data...")
-    val_data = BinaryDataset(os.path.join(REAL_PATH, "test/"), os.path.join(AI_PATH, "test/"), skip_len=1, grayscale=False)
-    print("Training Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
+    print("\nloading test data...")
+    val_data = BinaryDataset(REAL_PATH, AI_PATH, skip_len=1, grayscale=False, noise=0.05)
+    print("Test Data Sizes: Real -", len(val_data) - torch.sum(val_data.labels).item(), "AI -", torch.sum(val_data.labels).item())
 
     # load model checkpoint from training
     checkpoint = torch.load(args.path, map_location=args.device)
@@ -49,14 +49,14 @@ def main(args):
             correct += 1
 
         # progress message
-        if i % 10 == 0:
+        if t % 10 == 0:
             for _ in range(len(msg)):
                 sys.stdout.write('\b')
             for _ in range(len(msg)):
                 sys.stdout.write(' ')
             for _ in range(len(msg)):
                 sys.stdout.write('\b')
-            msg = str(i)+"/"+str(len(val_data)) + "  -- " + str(round(correct/(i+1), 3))
+            msg = str(t)+"/"+str(len(val_data)) + "  -- " + str(round(correct/(t+1), 3))
             sys.stdout.write(msg)
             sys.stdout.flush()
         
