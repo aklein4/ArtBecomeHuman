@@ -30,6 +30,15 @@ def scrape_folder(folder) -> list:
 
 class BinaryDataset(torch.utils.data.Dataset):
     def __init__(self, real_path, ai_path, skip_len=1, verbose=True, grayscale=False, noise=0):
+        """
+        A dataloader for working with binary image classification data.
+        :param real_path: Path to folder with non-ai images
+        :param ai_path: Path to folder with ai images
+        :param skip_len: Divide the data to make it smaller
+        :param grayscale: Whether to make the images gray scale.
+        :nosie: Whether to introduce noise to the images.
+        """
+        
         # define transform classes
         to_tensor = torchvision.transforms.PILToTensor()
         resize = torchvision.transforms.Resize([IMAGE_SIZE, IMAGE_SIZE])
@@ -43,6 +52,7 @@ class BinaryDataset(torch.utils.data.Dataset):
         ai_files = scrape_folder(ai_path)[::skip_len]
         combined = ai_files + real_files
 
+          # store noise
         self.noise = noise
 
         # save length
